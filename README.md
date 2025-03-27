@@ -1,4 +1,6 @@
-# hanzimode
+# [WIP] hanzimode
+
+### just started, a lot is to be done. readme is first and foremost for me so i know what i have to do
 
 This is a small website to help with learning chinese hànzì. The aim is to create a collection of characters, then go through them, either hànzì, pinyin or meaning, and input the other 2.
 
