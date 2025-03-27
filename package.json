@@ -1,0 +1,14 @@
+{
+	"name": "mandarinmode",
+	"type": "module",
+	"private": true,
+	"packageManager": "pnpm@10.6.5",
+	"scripts": {
+		"lint": "eslint . --fix"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^4.10.1",
+		"eslint": "^9.22.0",
+		"eslint-plugin-format": "^1.0.1"
+	}
+}
