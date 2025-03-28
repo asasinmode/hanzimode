@@ -37,6 +37,11 @@ if (!_version) {
 	}
 }
 
+updateCollectionLength();
+function updateCollectionLength() {
+	document.getElementById('collectionStatus').textContent = data.hanzi.length;
+}
+
 function saveData() {
 	localStorage.setItem('hanzimode.data', JSON.stringify(data.hanzi));
 	localStorage.setItem('hanzimode.version', data.version);
@@ -72,6 +77,7 @@ function addItem(event) {
 		const table = document.getElementById('dataTable');
 		addDataRow(table, el);
 	}
+	updateCollectionLength();
 }
 
 /**
@@ -171,6 +177,7 @@ async function importData(event) {
 				}
 
 				saveData();
+				updateCollectionLength();
 				event.target.value = '';
 			} catch (e) {
 				console.error(e);
