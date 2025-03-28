@@ -55,20 +55,20 @@ function addItem(event) {
 	/** @type {[HTMLInputElement, HTMLInputElement, HTMLInputElement, HTMLTextAreaElement]} */
 	const [symbolInput, pinyinInput, meaningInput, noteInput] = event.target;
 
-	const el = {
+	const item = {
 		symbol: symbolInput.value,
 		pinyin: pinyinInput.value,
 		meaning: meaningInput.value,
 		note: noteInput.value,
 	};
 
-	const index = data.hanzi.findIndex(oldEl => oldEl.symbol === el.symbol);
+	const index = data.hanzi.findIndex(h => h.symbol === item.symbol);
 	const addNew = index === -1;
 	if (addNew) {
-		data.hanzi.push(el);
+		data.hanzi.push(item);
 		updateCollectionLength();
 	} else {
-		data.hanzi.splice(index, 1, el);
+		data.hanzi.splice(index, 1, item);
 	}
 	saveData();
 
@@ -80,12 +80,12 @@ function addItem(event) {
 	if (isShowingData) {
 		const table = document.getElementById('dataTable');
 		if (addNew) {
-			addDataRow(table, el);
+			addDataRow(table, item);
 		} else {
-			const row = document.getElementById(`data-${el.symbol}`);
-			row.children.item(1).textContent = el.pinyin;
-			row.children.item(2).textContent = el.meaning;
-			row.children.item(3).textContent = el.note;
+			const row = document.getElementById(`data-${item.symbol}`);
+			row.children.item(1).textContent = item.pinyin;
+			row.children.item(2).textContent = item.meaning;
+			row.children.item(3).textContent = item.note;
 		}
 	}
 }
@@ -122,8 +122,8 @@ function showData() {
 	headerRow.appendChild(actionsHeader);
 	table.appendChild(headerRow);
 
-	for (const el of data.hanzi) {
-		addDataRow(table, el);
+	for (const item of data.hanzi) {
+		addDataRow(table, item);
 	}
 
 	footer.appendChild(table);
@@ -136,30 +136,33 @@ function showData() {
 function addDataRow(table, { symbol, pinyin, meaning, note }) {
 	const row = Object.assign(document.createElement('tr'), { id: `data-${symbol}` });
 
-	for (const el of [symbol, pinyin, meaning, note]) {
-		const cell = Object.assign(document.createElement('td'), { textContent: el });
+	for (const property of [symbol, pinyin, meaning, note]) {
+		const cell = Object.assign(document.createElement('td'), { textContent: property });
 		row.appendChild(cell);
 	}
 
 	const actionsCell = document.createElement('td');
 	const editButton = Object.assign(document.createElement('button'), { textContent: 'edit' });
 	editButton.addEventListener('click', () => {
-		const { symbol: _symbol, pinyin, meaning, note } = data.hanzi.find(el => el.symbol === symbol);
-		document.getElementById('dataInputSymbol').value = _symbol;
-		document.getElementById('dataInputPinyin').value = pinyin;
-		document.getElementById('dataInputMeaning').value = meaning;
-		document.getElementById('dataInputNote').value = note;
+		const item = data.hanzi.find(h => h.symbol === symbol);
+		document.getElementById('dataInputSymbol').value = item.symbol;
+		document.getElementById('dataInputPinyin').value = item.pinyin;
+		document.getElementById('dataInputMeaning').value = item.meaning;
+		document.getElementById('dataInputNote').value = item.note;
 	});
 	actionsCell.appendChild(editButton);
 
 	const deleteButton = Object.assign(document.createElement('button'), { textContent: 'delete' });
 	deleteButton.addEventListener('click', () => {
-		const index = data.hanzi.findIndex(el => el.symbol === symbol);
-		if (~index) {
-			data.hanzi.splice(index, 1);
-			saveData();
-			row.remove();
-			updateCollectionLength();
+		const proceed = confirm(`delete ${symbol}`);
+		if (proceed) {
+			const index = data.hanzi.findIndex(item => item.symbol === symbol);
+			if (~index) {
+				data.hanzi.splice(index, 1);
+				saveData();
+				row.remove();
+				updateCollectionLength();
+			}
 		}
 	});
 	actionsCell.appendChild(deleteButton);
