@@ -11,7 +11,7 @@ To use, download the `index.html` and `index.js` files, then open the `index.htm
 At the bottom of the page use the **expand data** button to show the list of your saved hànzì. Use the inputs to add the hànzì, its pinyin and meaning and optionally a note, then click the **add** button. The list can also be used to edit/remove existing characters.
 
 > [!WARNING]
-> Your data is automatically saved locally in browser storage, but it may be cleared because of external factors. I recommend using the **export data** button to backup your hànzì or share it between devices with **import data**.
+> Your data is automatically saved locally in browser storage, but it may be cleared because of external factors. I recommend using the **export data** button to backup your collection or share it between devices with **import data**.
 
 > [!TIP]
 > In the **meaning** input you can add multiple words separated by a semicolon like `age;years`. Any of these will be accepted when you play later.
@@ -30,7 +30,7 @@ Use the **start loop** button to start going through the characters you've added
 
 In the top left there is a counter showing how many characters you've gone through out of all of the ones you've added. Use the **reset loop** button at any point (or when you finished) to clear your progress and begin a new loop.
 
-###### todo
+### todo
 
 0. save/load data
 1. adding hanzi
@@ -38,7 +38,7 @@ In the top left there is a counter showing how many characters you've gone throu
 3. choose which type to show: hanzi/pinyin/meaning.
    - toggle mode how many choose options (3/5?) or type any of meaning/pinyin/hanzi
    - add noise hanzi?
-   - pinyin diacritic helpers
+   - pinyin diacritic helpers, 'ą'.normalize('NFD')
    - some button/hover to reveal one of other 2
    - display note somewhere
    - notifications (save/loaded) & errors somewhere
@@ -48,9 +48,10 @@ In the top left there is a counter showing how many characters you've gone throu
 7. store loop settings
 8. display X/Y hanzi progressed through/stored
 
-###### future?
+### future features?
 
 0. advanced settings?
 1. add images?
 2. merge somebody else's data
 3. fast mode? skip the `next` button, if correct move on after check
+4. select from collection which ones to use/add "subcollections" that use stuff from main?

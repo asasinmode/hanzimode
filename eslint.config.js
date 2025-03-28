@@ -9,6 +9,8 @@ export default antfu({
 		'style/brace-style': ['error', '1tbs'],
 		'curly': ['error', 'all'],
 		'no-console': 'off',
+		'no-unused-vars': 'off',
+		'unused-imports/no-unused-vars': 'off',
 	},
 	formatters: true,
 });
