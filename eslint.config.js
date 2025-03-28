@@ -11,6 +11,7 @@ export default antfu({
 		'no-console': 'off',
 		'no-unused-vars': 'off',
 		'unused-imports/no-unused-vars': 'off',
+		'no-alert': 'off',
 	},
 	formatters: true,
 });

@@ -140,11 +140,11 @@
 				</label>
 				<button id="dataAddItem">add</button>
 			</form>
-			<button class="dataButton" onclick="showData(event)">show data</button>
+			<button class="dataButton" onclick="toggleData(event)">show data</button>
 			<button class="dataButton" onclick="exportData()">export data</button>
 			<label for="dataImport">
 				import data
-				<input id="dataImport" type="file" />
+				<input id="dataImport" type="file" accept=".json" oninput="importData(event)" />
 			</label>
 		</footer>
 		<script src="./index.js"></script>
