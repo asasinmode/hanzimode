@@ -66,26 +66,20 @@ let isShowingData = false;
 function showData(event) {
 	if (isShowingData) {
 		document.getElementById('dataTable').remove();
-		event.target = 'show data';
+		event.target.textContent = 'show data';
 		isShowingData = false;
 		return;
 	}
 
 	const footer = document.querySelector('footer');
-	const table = document.createElement('table');
-	table.id = 'dataTable';
+	const table = Object.assign(document.createElement('table'), { id: 'dataTable' });
 
 	const headerRow = document.createElement('tr');
-	const symbolHeader = document.createElement('th');
-	const pinyinHeader = document.createElement('th');
-	const meaningHeader = document.createElement('th');
-	const noteHeader = document.createElement('th');
-	const actionsHeader = document.createElement('th');
-	symbolHeader.textContent = 'hànzì';
-	pinyinHeader.textContent = 'pinyin';
-	meaningHeader.textContent = 'meaning';
-	noteHeader.textContent = 'note';
-	actionsHeader.textContent = 'actions';
+	const symbolHeader = Object.assign(document.createElement('th'), { textContent: 'hànzì' });
+	const pinyinHeader = Object.assign(document.createElement('th'), { textContent: 'pinyin' });
+	const meaningHeader = Object.assign(document.createElement('th'), { textContent: 'meaning' });
+	const noteHeader = Object.assign(document.createElement('th'), { textContent: 'note' });
+	const actionsHeader = Object.assign(document.createElement('th'), { textContent: 'actions' });
 
 	headerRow.appendChild(symbolHeader);
 	headerRow.appendChild(pinyinHeader);
@@ -98,19 +92,16 @@ function showData(event) {
 		const row = document.createElement('tr');
 
 		for (const el of [symbol, pinyin, meaning, note]) {
-			const cell = document.createElement('td');
-			cell.textContent = el;
+			const cell = Object.assign(document.createElement('td'), { textContent: el });
 			row.appendChild(cell);
 		}
 
 		const cell = document.createElement('td');
 
-		const editButton = document.createElement('button');
-		editButton.textContent = 'edit';
+		const editButton = Object.assign(document.createElement('button'), { textContent: 'edit' });
 		cell.appendChild(editButton);
 
-		const deleteButton = document.createElement('button');
-		deleteButton.textContent = 'delete';
+		const deleteButton = Object.assign(document.createElement('button'), { textContent: 'delete' });
 		cell.appendChild(deleteButton);
 
 		row.appendChild(cell);
@@ -120,4 +111,16 @@ function showData(event) {
 	footer.appendChild(table);
 	event.target.textContent = 'hide data';
 	isShowingData = true;
+}
+
+function exportData() {
+	const content = JSON.stringify(data.hanzi, null, 2);
+	const blob = new Blob([content], { type: 'application/json' });
+	const href = URL.createObjectURL(blob);
+	const a = Object.assign(document.createElement('a'), {
+		href,
+		download: 'hanzimode.json',
+	});
+	a.click();
+	URL.revokeObjectURL(href);
 }
