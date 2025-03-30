@@ -56,10 +56,10 @@ function addItem(event) {
 	const [symbolInput, pinyinInput, meaningInput, noteInput] = event.target;
 
 	const item = {
-		symbol: symbolInput.value,
-		pinyin: pinyinInput.value,
-		meaning: meaningInput.value,
-		note: noteInput.value,
+		symbol: symbolInput.value.trim(),
+		pinyin: pinyinInput.value.trim(),
+		meaning: meaningInput.value.trim(),
+		note: noteInput.value.trim(),
 	};
 
 	const index = data.hanzi.findIndex(h => h.symbol === item.symbol);
