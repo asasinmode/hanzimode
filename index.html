@@ -13,9 +13,12 @@
 				padding: 0;
 			}
 
+			:root {
+				color-scheme: light dark;
+			}
+
 			body {
-				background-color: #fafafa;
-				color-scheme: light;
+				background-color: light-dark(#fafafa, #171717);
 				margin: 0;
 				width: 100vw;
 				height: 100vh;
@@ -38,12 +41,6 @@
 				display: grid;
 				grid-template-rows: min-content 1fr auto;
 				grid-template-columns: 1;
-			}
-
-			.dark body {
-				background-color: #171717;
-				color: white;
-				color-scheme: dark;
 			}
 
 			@font-face {
@@ -104,6 +101,19 @@
 
 				.dataButton:first-of-type {
 					justify-self: end;
+				}
+
+				#dataTable {
+					justify-self: center;
+
+					tr:nth-child(even) {
+						background: light-dark(#e5e5e5, #262626);
+					}
+
+					td:nth-child(3),
+					td:nth-child(4) {
+						text-wrap: wrap;
+					}
 				}
 			}
 		</style>

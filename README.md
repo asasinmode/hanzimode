@@ -14,7 +14,7 @@ At the bottom of the page use the **expand data** button to show the list of you
 > Your data is automatically saved locally in browser storage, but it may be cleared because of external factors. I recommend using the **export data** button to backup your collection or share it between devices with **import data**.
 
 > [!TIP]
-> In the **meaning** input you can add multiple words separated by a semicolon like `age;years`. Any of these will be accepted when you play later.
+> In the **meaning** input you can add multiple words separated by a semicolon like `three; trzy; 3`. Any of these will be accepted when you play later.
 
 ## settings
 

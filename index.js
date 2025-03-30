@@ -109,10 +109,10 @@ function showData() {
 	const table = Object.assign(document.createElement('table'), { id: 'dataTable' });
 
 	const headerRow = document.createElement('tr');
-	const symbolHeader = Object.assign(document.createElement('th'), { textContent: 'hànzì', width: '5%' });
-	const pinyinHeader = Object.assign(document.createElement('th'), { textContent: 'pinyin', width: '15%' });
-	const meaningHeader = Object.assign(document.createElement('th'), { textContent: 'meaning', width: '30%' });
-	const noteHeader = Object.assign(document.createElement('th'), { textContent: 'note', width: '40%' });
+	const symbolHeader = Object.assign(document.createElement('th'), { textContent: 'hànzì', width: '7.5%' });
+	const pinyinHeader = Object.assign(document.createElement('th'), { textContent: 'pinyin', width: '12.5%' });
+	const meaningHeader = Object.assign(document.createElement('th'), { textContent: 'meaning', width: '35%' });
+	const noteHeader = Object.assign(document.createElement('th'), { textContent: 'note', width: '35%' });
 	const actionsHeader = Object.assign(document.createElement('th'), { textContent: 'actions', width: '10%' });
 
 	headerRow.appendChild(symbolHeader);
@@ -144,6 +144,7 @@ function addDataRow(table, { symbol, pinyin, meaning, note }) {
 	const actionsCell = document.createElement('td');
 	const editButton = Object.assign(document.createElement('button'), { textContent: 'edit' });
 	editButton.addEventListener('click', () => {
+		document.getElementById('dataForm').scrollIntoView();
 		const item = data.hanzi.find(h => h.symbol === symbol);
 		document.getElementById('dataInputSymbol').value = item.symbol;
 		document.getElementById('dataInputPinyin').value = item.pinyin;
