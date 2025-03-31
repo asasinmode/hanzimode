@@ -14,10 +14,33 @@
  *  @property {IHanzi[]} hanzi saved hanzi
  */
 
-let isShowingData = false;
+/**
+ * @typedef IHanziKey
+ * @type {'symbol'|'pinyin'|'meaning'}
+ */
+
+/**
+ * @typedef ITarget
+ * @type {object}
+ * @property {IHanzi} hanzi current hanzi
+ * @property {IHanziKey} type the displayed target
+ * @property {IHanziKey} input1Type first input expected type
+ * @property {IHanziKey} input2Type second input expected type
+ */
 
 /** @type {IData} */
 let data = { version: '1', hanzi: [] };
+let isShowingData = false;
+
+let isLooping = false;
+/** @type {IHanzi[]} */
+let toBeLooped = [];
+/** @type {string[]} */
+let loopedThrough = [];
+/** @type {ITarget|undefined} */
+let currentTarget;
+
+const allowedTargets = ['symbol', 'pinyin', 'meaning'];
 
 const _version = localStorage.getItem('hanzimode.version');
 if (!_version) {
@@ -37,9 +60,11 @@ if (!_version) {
 	}
 }
 
-updateCollectionLength();
-function updateCollectionLength() {
-	document.getElementById('collectionStatus').textContent = data.hanzi.length;
+updateLoopStatus();
+function updateLoopStatus() {
+	document.getElementById('loopStatus').textContent = isLooping
+		? `${loopedThrough.length} / ${data.hanzi.length}`
+		: data.hanzi.length;
 }
 
 function saveData() {
@@ -66,21 +91,15 @@ function addItem(event) {
 	const addNew = index === -1;
 	if (addNew) {
 		data.hanzi.push(item);
-		updateCollectionLength();
+		updateLoopStatus();
 	} else {
 		data.hanzi.splice(index, 1, item);
 	}
 	saveData();
 
-	symbolInput.value = '';
-	pinyinInput.value = '';
-	meaningInput.value = '';
-	noteInput.value = '';
-
 	if (isShowingData) {
-		const table = document.getElementById('dataTable');
 		if (addNew) {
-			addDataRow(table, item);
+			addDataRow(document.getElementById('dataTable').children.item(1), item);
 		} else {
 			const row = document.getElementById(`data-${item.symbol}`);
 			row.children.item(1).textContent = item.pinyin;
@@ -88,6 +107,11 @@ function addItem(event) {
 			row.children.item(3).textContent = item.note;
 		}
 	}
+
+	symbolInput.value = '';
+	pinyinInput.value = '';
+	meaningInput.value = '';
+	noteInput.value = '';
 }
 
 /**
@@ -95,7 +119,11 @@ function addItem(event) {
 	*/
 function toggleData(event) {
 	if (isShowingData) {
-		document.getElementById('dataTable').remove();
+		const table = document.getElementById('dataTable');
+		const thead = table.firstElementChild.cloneNode(true);
+		table.style.display = 'none';
+		table.innerHTML = '';
+		table.appendChild(thead);
 		event.target.textContent = 'show data';
 	} else {
 		showData();
@@ -105,35 +133,21 @@ function toggleData(event) {
 }
 
 function showData() {
-	const footer = document.querySelector('footer');
-	const table = Object.assign(document.createElement('table'), { id: 'dataTable' });
+	const table = document.getElementById('dataTable');
+	table.style.display = '';
 
-	const headerRow = document.createElement('tr');
-	const symbolHeader = Object.assign(document.createElement('th'), { textContent: 'hànzì', width: '7.5%' });
-	const pinyinHeader = Object.assign(document.createElement('th'), { textContent: 'pinyin', width: '12.5%' });
-	const meaningHeader = Object.assign(document.createElement('th'), { textContent: 'meaning', width: '35%' });
-	const noteHeader = Object.assign(document.createElement('th'), { textContent: 'note', width: '35%' });
-	const actionsHeader = Object.assign(document.createElement('th'), { textContent: 'actions', width: '10%' });
-
-	headerRow.appendChild(symbolHeader);
-	headerRow.appendChild(pinyinHeader);
-	headerRow.appendChild(meaningHeader);
-	headerRow.appendChild(noteHeader);
-	headerRow.appendChild(actionsHeader);
-	table.appendChild(headerRow);
-
+	const tbody = document.createElement('tbody');
 	for (const item of data.hanzi) {
-		addDataRow(table, item);
+		addDataRow(tbody, item);
 	}
-
-	footer.appendChild(table);
+	table.appendChild(tbody);
 }
 
 /**
- * @param {HTMLTableElement} table
+ * @param {HTMLTableSectionElement} tbody
  * @param {IHanzi} hanzi
  */
-function addDataRow(table, { symbol, pinyin, meaning, note }) {
+function addDataRow(tbody, { symbol, pinyin, meaning, note }) {
 	const row = Object.assign(document.createElement('tr'), { id: `data-${symbol}` });
 
 	for (const property of [symbol, pinyin, meaning, note]) {
@@ -162,14 +176,14 @@ function addDataRow(table, { symbol, pinyin, meaning, note }) {
 				data.hanzi.splice(index, 1);
 				saveData();
 				row.remove();
-				updateCollectionLength();
+				updateLoopStatus();
 			}
 		}
 	});
 	actionsCell.appendChild(deleteButton);
 	row.appendChild(actionsCell);
 
-	table.appendChild(row);
+	tbody.appendChild(row);
 }
 
 function exportData() {
@@ -208,7 +222,7 @@ async function importData(event) {
 				}
 
 				saveData();
-				updateCollectionLength();
+				updateLoopStatus();
 				event.target.value = '';
 			} catch (e) {
 				console.error(e);
@@ -222,3 +236,88 @@ async function importData(event) {
 		reader.readAsText(file);
 	}
 }
+
+/** @param {Event} event target is startOrResetLoop btn */
+function startOrResetLoop(event) {
+	if (isLooping && toBeLooped.length > 0 && !confirm('are you sure?')) {
+		return;
+	} else if (!isLooping) {
+		event.target.textContent = 'reset loop';
+	}
+
+	isLooping = true;
+	loopedThrough = [];
+	toBeLooped = [...data.hanzi];
+	for (let i = toBeLooped.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[toBeLooped[i], toBeLooped[j]] = [toBeLooped[j], toBeLooped[i]];
+	}
+	console.log(toBeLooped.map(c => c.symbol));
+
+	document.body.classList.add('looping');
+	document.getElementById('stopLoop').style.display = '';
+
+	updateLoopStatus();
+	nextTarget();
+}
+
+/** @param {Event} event target is stopLoop btn */
+function stopLoop(event) {
+	if (!confirm('are you sure?')) {
+		return;
+	}
+
+	isLooping = false;
+	loopedThrough = [];
+	toBeLooped = [];
+
+	document.getElementById('startOrResetLoop').textContent = 'start loop';
+	document.body.classList.remove('looping');
+	event.target.style.display = 'none';
+	document.querySelector('main').innerHTML = '';
+
+	updateLoopStatus();
+}
+
+/** @param {string} type */
+function targetTypeLabel(type) {
+	return type === 'symbol' ? 'hànzì' : type;
+}
+
+/** @param {Event} event target is next button */
+function nextTarget(event) {
+	if (currentTarget) {
+		loopedThrough.push(currentTarget.symbol);
+		toBeLooped.pop();
+	}
+
+	currentTarget = { hanzi: toBeLooped[toBeLooped.length - 1] };
+	const chooseFrom = [...allowedTargets];
+	currentTarget.type = chooseFrom.splice(Math.floor(Math.random() * chooseFrom.length), 1)[0];
+
+	document.getElementById('loopTarget').textContent = currentTarget.hanzi[currentTarget.type];
+
+	const randomIndex = Math.random() > 0.5 ? 1 : 0;
+	currentTarget.input1Type = chooseFrom[randomIndex];
+	currentTarget.input2Type = chooseFrom[1 - randomIndex];
+
+	const input1 = document.getElementById('loopInput1');
+	input1.value = '';
+	// TODO cant use textContent it disappears input
+	input1.parentElement.textContent = targetTypeLabel(currentTarget.input1Type);
+
+	const input2 = document.getElementById('loopInput2');
+	input2.value = '';
+	// TODO cant use textContent it disappears input
+	input2.parentElement.textContent = targetTypeLabel(currentTarget.input2Type);
+
+	if (!toBeLooped.length) {
+		event.target.setAttribute('disabled', 'true');
+	}
+}
+
+// should check inputs, color them green/red
+// if all correct show note
+// labels should have reveal buttons
+// color next orange if unchecked/incorrect?
+function checkTarget() {}

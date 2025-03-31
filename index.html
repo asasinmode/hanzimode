@@ -41,6 +41,7 @@
 				display: grid;
 				grid-template-rows: min-content 1fr auto;
 				grid-template-columns: 1;
+				row-gap: 0.75rem;
 			}
 
 			@font-face {
@@ -116,6 +117,67 @@
 					}
 				}
 			}
+
+			header {
+				position: relative;
+				display: grid;
+				grid-template-columns: 1fr;
+				column-gap: 0.5rem;
+
+				#loopStatus {
+					position: absolute;
+					left: 0;
+					top: 50%;
+					transform: translateY(-50%);
+				}
+
+				button {
+					white-space: nowrap;
+					justify-self: center;
+				}
+
+				.looping & {
+					grid-template-columns: 1fr 1fr;
+
+					#startOrResetLoop {
+						justify-self: end;
+					}
+
+					#stopLoop {
+						justify-self: start;
+					}
+				}
+			}
+
+			main {
+				display: grid;
+				grid-auto-rows: min-content;
+				grid-template-columns: 1fr 1fr;
+				column-gap: 0.5rem;
+				row-gap: 0.25rem;
+
+				& * {
+					display: none;
+				}
+
+				.looping & * {
+					display: revert;
+				}
+
+				#loopTarget {
+					grid-column: 1 / span 2;
+					text-align: center;
+				}
+
+				label[for='loopInput1'],
+				button:nth-of-type(1) {
+					justify-self: end;
+				}
+
+				button:nth-of-type(2) {
+					justify-self: start;
+				}
+			}
 		</style>
 		<script>
 			const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -129,9 +191,22 @@
 
 	<body>
 		<header>
-			<span id="collectionStatus">0</span>
+			<span id="loopStatus">0</span>
+			<button id="startOrResetLoop" onclick="startOrResetLoop(event)">start loop</button>
+			<button id="stopLoop" style="display: none" onclick="stopLoop(event)">stop loop</button>
 		</header>
-		<main id="tmp">uwu</main>
+		<main>
+			<h1 id="loopTarget"></h1>
+			<label for="loopInput1">
+				<input id="loopInput1" required="true" />
+			</label>
+			<label for="loopInput2">
+				<input id="loopInput2" required="true" />
+			</label>
+			<p id="loopTargetNote" style="display: none"></p>
+			<button onclick="checkTarget()">check</button>
+			<button onclick="nextTarget()">next</button>
+		</main>
 		<footer>
 			<form id="dataForm" onsubmit="addItem(event)">
 				<label for="dataInputSymbol">
@@ -158,6 +233,17 @@
 				import data
 				<input id="dataImport" type="file" accept=".json" oninput="importData(event)" />
 			</label>
+			<table id="dataTable" style="display: none">
+				<thead>
+					<tr>
+						<th width="7.5%">hànzì</th>
+						<th width="12.5%">pinyin</th>
+						<th width="35%">meaning</th>
+						<th width="35%">note</th>
+						<th width="10%">actions</th>
+					</tr>
+				</thead>
+			</table>
 		</footer>
 		<script src="./index.js"></script>
 	</body>
