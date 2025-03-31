@@ -12,9 +12,12 @@ At the bottom of the page use the **expand data** button to show the list of you
 
 > [!WARNING]
 > Your data is automatically saved locally in browser storage, but it may be cleared because of external factors. I recommend using the **export data** button to backup your collection or share it between devices with **import data**.
+> **renaming or moving the `index.html` file will wipe\* browser data**
 
 > [!TIP]
 > In the **meaning** input you can add multiple words separated by a semicolon like `three; trzy; 3`. Any of these will be accepted when you play later.
+
+_\* technically it would still be there but inaccessible to the renamed/moved `index.html` file. To get it back you'd have to rename the file back_
 
 ## settings
 
@@ -28,7 +31,7 @@ Once you've made a collection of hànzì you're familiar with, use the toggles a
 
 Use the **start loop** button to start going through the characters you've added. A character in one of your selected _modes_ will appear in the middle, then below it will be the selected inputs. Once you fill them, use the **check** button to see if you're correct. If you're struggling, you can **reveal** any of the expected inputs or your note.
 
-In the top left there is a counter showing how many characters you've gone through out of all of the ones you've added. Use the **reset loop** button at any point (or when you finished) to clear your progress and begin a new loop.
+In the top left there is a counter showing how many characters you've gone through out of all of the ones you've added. Use the **reset loop** button at any point (or when finished) to clear your progress and begin a new loop.
 
 ### todo
 
