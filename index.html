@@ -65,7 +65,7 @@
 
 				#dataForm,
 				#dataTable {
-					grid-column: 1 / span 3;
+					grid-column: span 3 / span 3;
 				}
 
 				#dataForm {
@@ -81,7 +81,7 @@
 
 					label[for='dataInputNote'],
 					#dataAddItem {
-						grid-row: 1 / span 3;
+						grid-row: span 3 / span 3;
 					}
 
 					label[for='dataInputNote'] textarea {
@@ -155,28 +155,53 @@
 				grid-template-columns: 1fr 1fr;
 				column-gap: 0.5rem;
 				row-gap: 0.25rem;
+				align-content: center;
 
-				& * {
+				& > * {
 					display: none;
 				}
 
-				.looping & * {
+				.looping & > * {
 					display: revert;
+				}
+
+				#targetNote {
+					justify-self: center;
+					grid-column: span 2 / span 2;
+					width: 100%;
+					max-width: 640px;
+					text-align: center;
 				}
 
 				#loopTarget {
 					font-weight: 400;
-					grid-column: 1 / span 2;
+					grid-column: span 2 / span 2;
 					text-align: center;
 				}
 
-				label[for='loopInput1'],
-				button:nth-of-type(1) {
+				#loopFieldset1,
+				#checkTarget {
 					justify-self: end;
 				}
 
-				button:nth-of-type(2) {
+				#loopFieldset2,
+				#nextTarget {
 					justify-self: start;
+				}
+
+				fieldset {
+					grid-template-rows: subgrid;
+					grid-row: span 5 / span 5;
+					padding-inline: 0.5rem;
+					padding-top: 0.25rem;
+
+					.looping & {
+						display: grid;
+					}
+
+					input {
+						margin-right: 0.5rem;
+					}
 				}
 			}
 		</style>
@@ -194,19 +219,21 @@
 		<header>
 			<span id="loopStatus">0</span>
 			<button id="startOrResetLoop" onclick="startOrResetLoop(event)">start loop</button>
-			<button id="stopLoop" style="display: none" onclick="stopLoop(event)">stop loop</button>
+			<button id="stopLoop" style="display: none" onclick="stopLoop()">stop loop</button>
 		</header>
 		<main>
+			<p id="targetNote">
+				<button id="revealTargetNote" onclick="revealTargetNote()">reveal note</button>
+			</p>
 			<h1 id="loopTarget"></h1>
-			<label for="loopInput1">
-				<input id="loopInput1" required="true" />
-			</label>
-			<label for="loopInput2">
-				<input id="loopInput2" required="true" />
-			</label>
-			<p id="loopTargetNote" style="display: none"></p>
-			<button onclick="checkTarget()">check</button>
-			<button onclick="nextTarget()">next</button>
+			<fieldset id="loopFieldset1">
+				<legend></legend>
+			</fieldset>
+			<fieldset id="loopFieldset2">
+				<legend></legend>
+			</fieldset>
+			<button id="checkTarget" onclick="checkTarget()">check</button>
+			<button id="nextTarget" onclick="nextTarget()">next</button>
 		</main>
 		<footer>
 			<form id="dataForm" onsubmit="addItem(event)">

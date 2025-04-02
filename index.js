@@ -39,7 +39,12 @@ let toBeLooped = [];
 let loopedThrough = [];
 /** @type {ITarget|undefined} */
 let currentTarget;
+/** @type {string[]} */
+let currentFieldset1Options;
+/** @type {string[]} */
+let currentFieldset2Options;
 
+const GUESS_OPTIONS_NUMBER = 4;
 const allowedTargets = ['symbol', 'pinyin', 'meaning'];
 
 const _version = localStorage.getItem('hanzimode.version');
@@ -63,7 +68,7 @@ if (!_version) {
 updateLoopStatus();
 function updateLoopStatus() {
 	document.getElementById('loopStatus').textContent = isLooping
-		? `${loopedThrough.length} / ${data.hanzi.length}`
+		? `${loopedThrough.length + 1} / ${data.hanzi.length}`
 		: data.hanzi.length;
 }
 
@@ -222,7 +227,7 @@ async function importData(event) {
 				}
 
 				saveData();
-				updateLoopStatus();
+				stopLoop(true);
 				event.target.value = '';
 			} catch (e) {
 				console.error(e);
@@ -252,7 +257,6 @@ function startOrResetLoop(event) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[toBeLooped[i], toBeLooped[j]] = [toBeLooped[j], toBeLooped[i]];
 	}
-	console.log(toBeLooped.map(c => c.symbol));
 
 	document.body.classList.add('looping');
 	document.getElementById('stopLoop').style.display = '';
@@ -261,19 +265,24 @@ function startOrResetLoop(event) {
 	nextTarget();
 }
 
-/** @param {Event} event target is stopLoop btn */
-function stopLoop(event) {
-	if (!confirm('are you sure?')) {
+/**
+ * @param {boolean|undefined} force if true will skip confirm
+ */
+function stopLoop(force = false) {
+	if (!force && !confirm('are you sure?')) {
 		return;
 	}
 
 	isLooping = false;
 	loopedThrough = [];
 	toBeLooped = [];
+	currentTarget = undefined;
+	currentFieldset1Options = undefined;
+	currentFieldset2Options = undefined;
 
 	document.getElementById('startOrResetLoop').textContent = 'start loop';
 	document.body.classList.remove('looping');
-	event.target.style.display = 'none';
+	document.getElementById('stopLoop').style.display = 'none';
 	document.querySelector('main').innerHTML = '';
 
 	updateLoopStatus();
@@ -284,11 +293,19 @@ function targetTypeLabel(type) {
 	return type === 'symbol' ? 'hànzì' : type;
 }
 
-/** @param {Event} event target is next button */
-function nextTarget(event) {
+function nextTarget() {
+	if (data.hanzi.length < 5) {
+		alert('at least 5 items have to be in the collection');
+		throw new Error('at least 5 items have to be in the collection');
+	}
+
 	if (currentTarget) {
-		loopedThrough.push(currentTarget.symbol);
+		loopedThrough.push(currentTarget.hanzi.symbol);
 		toBeLooped.pop();
+
+		if (toBeLooped.length === 1) {
+			document.getElementById('nextTarget').setAttribute('disabled', 'true');
+		}
 	}
 
 	currentTarget = { hanzi: toBeLooped[toBeLooped.length - 1] };
@@ -301,19 +318,55 @@ function nextTarget(event) {
 	currentTarget.input1Type = chooseFrom[randomIndex];
 	currentTarget.input2Type = chooseFrom[1 - randomIndex];
 
-	const input1 = document.getElementById('loopInput1');
-	input1.value = '';
-	// TODO cant use textContent it disappears input
-	input1.parentElement.textContent = targetTypeLabel(currentTarget.input1Type);
+	const indexes = createTargetOptions(currentTarget.input1Type, 'loopFieldset1', currentFieldset1Options = []);
+	createTargetOptions(currentTarget.input2Type, 'loopFieldset2', currentFieldset2Options = [], indexes);
 
-	const input2 = document.getElementById('loopInput2');
-	input2.value = '';
-	// TODO cant use textContent it disappears input
-	input2.parentElement.textContent = targetTypeLabel(currentTarget.input2Type);
+	updateLoopStatus();
+}
 
-	if (!toBeLooped.length) {
-		event.target.setAttribute('disabled', 'true');
+/**
+ * @param {IHanziKey} type
+ * @param {string} fieldsetId
+ * @param {string[]} options
+ * @param {number[]|undefined} optionIndexes
+ * @returns {number[]} indexes of created options, to be used for second input
+ */
+function createTargetOptions(type, fieldsetId, options, optionIndexes) {
+	const rv = [];
+	if (optionIndexes) {
+		for (const index of optionIndexes) {
+			const option = data.hanzi[index][type];
+			Math.random() < 0.5 ? options.push(option) : options.unshift(option);
+		}
+	} else {
+		while (options.length < GUESS_OPTIONS_NUMBER - 1) {
+			const optionIndex = Math.floor(Math.random() * data.hanzi.length);
+			const { [type]: option } = data.hanzi[optionIndex];
+			if (currentTarget.hanzi[type] !== option && !options.includes(option)) {
+				options.push(option);
+				rv.push(optionIndex);
+			}
+		}
 	}
+	options.splice(Math.floor(Math.random() * GUESS_OPTIONS_NUMBER), 0, currentTarget.hanzi[type]);
+
+	const fieldset1 = document.getElementById(fieldsetId);
+	fieldset1.querySelector('legend').textContent = targetTypeLabel(type);
+	while (fieldset1.children.length > 1) {
+		fieldset1.lastChild.remove();
+	}
+
+	for (let i = 0; i < options.length; i++) {
+		const option = options[i];
+		const id = `${fieldsetId}-option${i}`;
+		const label = Object.assign(document.createElement('label'), { for: id });
+		const input = Object.assign(document.createElement('input'), { id, type: 'radio', name: type });
+		label.appendChild(input);
+		label.append(option);
+		fieldset1.appendChild(label);
+	}
+
+	return rv;
 }
 
 // should check inputs, color them green/red
@@ -321,3 +374,5 @@ function nextTarget(event) {
 // labels should have reveal buttons
 // color next orange if unchecked/incorrect?
 function checkTarget() {}
+
+function revealTargetNote() {}
