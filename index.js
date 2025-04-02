@@ -24,8 +24,6 @@
  * @type {object}
  * @property {IHanzi} hanzi current hanzi
  * @property {IHanziKey} type the displayed target
- * @property {IHanziKey} input1Type first input expected type
- * @property {IHanziKey} input2Type second input expected type
  */
 
 /** @type {IData} */
@@ -39,10 +37,10 @@ let toBeLooped = [];
 let loopedThrough = [];
 /** @type {ITarget|undefined} */
 let currentTarget;
-/** @type {string[]} */
-let currentFieldset1Options;
-/** @type {string[]} */
-let currentFieldset2Options;
+/** @type {number} */
+let fieldset1CorrectIndex;
+/** @type {number} */
+let fieldset2CorrectIndex;
 
 const GUESS_OPTIONS_NUMBER = 4;
 const allowedTargets = ['symbol', 'pinyin', 'meaning'];
@@ -272,12 +270,11 @@ function stopLoop() {
 	loopedThrough = [];
 	toBeLooped = [];
 	currentTarget = undefined;
-	currentFieldset1Options = undefined;
-	currentFieldset2Options = undefined;
 
 	document.getElementById('startOrResetLoop').textContent = 'start loop';
 	document.getElementById('nextTarget').removeAttribute('disabled');
 	document.body.classList.remove('looping');
+	resetFieldsets();
 
 	updateLoopStatus();
 }
@@ -307,14 +304,14 @@ function nextTarget() {
 	currentTarget.type = chooseFrom.splice(Math.floor(Math.random() * chooseFrom.length), 1)[0];
 
 	hideTargetNote();
+	resetFieldsets();
 	document.getElementById('loopTarget').textContent = currentTarget.hanzi[currentTarget.type];
 
 	const randomIndex = Math.random() > 0.5 ? 1 : 0;
-	currentTarget.input1Type = chooseFrom[randomIndex];
-	currentTarget.input2Type = chooseFrom[1 - randomIndex];
 
-	const indexes = createTargetOptions(currentTarget.input1Type, 'loopFieldset1', currentFieldset1Options = []);
-	createTargetOptions(currentTarget.input2Type, 'loopFieldset2', currentFieldset2Options = [], indexes);
+	let indexes;
+	[indexes, fieldset1CorrectIndex] = createTargetOptions(chooseFrom[randomIndex], 'loopFieldset1');
+	[, fieldset2CorrectIndex] = createTargetOptions(chooseFrom[1 - randomIndex], 'loopFieldset2', indexes);
 
 	updateLoopStatus();
 }
@@ -322,28 +319,29 @@ function nextTarget() {
 /**
  * @param {IHanziKey} type
  * @param {string} fieldsetId
- * @param {string[]} options
  * @param {number[]|undefined} optionIndexes
- * @returns {number[]} indexes of created options, to be used for second input
+ * @returns {[number[],string]} indexes of created options to be used for second input and correct answer index
  */
-function createTargetOptions(type, fieldsetId, options, optionIndexes) {
-	const rv = [];
+function createTargetOptions(type, fieldsetId, optionIndexes) {
+	const options = [];
 	if (optionIndexes) {
 		for (const index of optionIndexes) {
 			const option = data.hanzi[index][type];
 			Math.random() < 0.5 ? options.push(option) : options.unshift(option);
 		}
 	} else {
+		optionIndexes = [];
 		while (options.length < GUESS_OPTIONS_NUMBER - 1) {
 			const optionIndex = Math.floor(Math.random() * data.hanzi.length);
 			const { [type]: option } = data.hanzi[optionIndex];
 			if (currentTarget.hanzi[type] !== option && !options.includes(option)) {
 				options.push(option);
-				rv.push(optionIndex);
+				optionIndexes.push(optionIndex);
 			}
 		}
 	}
-	options.splice(Math.floor(Math.random() * GUESS_OPTIONS_NUMBER), 0, currentTarget.hanzi[type]);
+	const correctIndex = Math.floor(Math.random() * GUESS_OPTIONS_NUMBER);
+	options.splice(correctIndex, 0, currentTarget.hanzi[type]);
 
 	const fieldset1 = document.getElementById(fieldsetId);
 	fieldset1.querySelector('legend').textContent = targetTypeLabel(type);
@@ -355,20 +353,46 @@ function createTargetOptions(type, fieldsetId, options, optionIndexes) {
 		const option = options[i];
 		const id = `${fieldsetId}-option${i}`;
 		const label = Object.assign(document.createElement('label'), { for: id });
-		const input = Object.assign(document.createElement('input'), { id, type: 'radio', name: type });
+		const input = Object.assign(document.createElement('input'), { id, type: 'radio', name: type, value: i });
 		label.appendChild(input);
 		label.append(option);
 		fieldset1.appendChild(label);
 	}
 
-	return rv;
+	return [optionIndexes, correctIndex];
 }
 
-// should check inputs, color them green/red
-// if all correct show note
-// labels should have reveal buttons
-// color next orange if unchecked/incorrect?
-function checkTarget() {}
+function checkTarget() {
+	const fieldset1 = document.getElementById('loopFieldset1');
+	const fieldset2 = document.getElementById('loopFieldset2');
+	checkFieldset(fieldset1, fieldset1CorrectIndex);
+	checkFieldset(fieldset2, fieldset2CorrectIndex);
+}
+
+/**
+	* @param {HTMLElement} element
+	* @param {number} correctIndex
+	*/
+function checkFieldset(element, correctIndex) {
+	const value = element.querySelector('input:checked')?.value;
+	if (value) {
+		const isCorrect = correctIndex.toString() === value;
+		if (isCorrect) {
+			element.classList.toggle('correct', true);
+			element.classList.toggle('incorrect', false);
+		} else {
+			element.classList.toggle('incorrect', true);
+			element.classList.toggle('correct', false);
+		}
+	} else {
+		element.classList.remove('correct', 'incorrect');
+	}
+}
+
+function resetFieldsets() {
+	document.getElementById('loopFieldset1').classList.remove('correct', 'incorrect');
+	document.getElementById('loopFieldset2').classList.remove('correct', 'incorrect');
+}
 
 function hideTargetNote() {
 	const element = document.getElementById('targetNote');
