@@ -276,6 +276,7 @@ function stopLoop() {
 	currentFieldset2Options = undefined;
 
 	document.getElementById('startOrResetLoop').textContent = 'start loop';
+	document.getElementById('nextTarget').removeAttribute('disabled');
 	document.body.classList.remove('looping');
 
 	updateLoopStatus();
