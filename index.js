@@ -227,7 +227,7 @@ async function importData(event) {
 				}
 
 				saveData();
-				stopLoop(true);
+				stopLoop();
 				event.target.value = '';
 			} catch (e) {
 				console.error(e);
@@ -244,7 +244,10 @@ async function importData(event) {
 
 /** @param {Event} event target is startOrResetLoop btn */
 function startOrResetLoop(event) {
-	if (isLooping && toBeLooped.length > 0 && !confirm('are you sure?')) {
+	if (isLooping) {
+		if (toBeLooped.length <= 1 || confirm('are you sure?')) {
+			stopLoop();
+		}
 		return;
 	} else if (!isLooping) {
 		event.target.textContent = 'reset loop';
@@ -259,20 +262,12 @@ function startOrResetLoop(event) {
 	}
 
 	document.body.classList.add('looping');
-	document.getElementById('stopLoop').style.display = '';
 
 	updateLoopStatus();
 	nextTarget();
 }
 
-/**
- * @param {boolean|undefined} force if true will skip confirm
- */
-function stopLoop(force = false) {
-	if (!force && !confirm('are you sure?')) {
-		return;
-	}
-
+function stopLoop() {
 	isLooping = false;
 	loopedThrough = [];
 	toBeLooped = [];
@@ -282,8 +277,6 @@ function stopLoop(force = false) {
 
 	document.getElementById('startOrResetLoop').textContent = 'start loop';
 	document.body.classList.remove('looping');
-	document.getElementById('stopLoop').style.display = 'none';
-	document.querySelector('main').innerHTML = '';
 
 	updateLoopStatus();
 }
@@ -312,6 +305,7 @@ function nextTarget() {
 	const chooseFrom = [...allowedTargets];
 	currentTarget.type = chooseFrom.splice(Math.floor(Math.random() * chooseFrom.length), 1)[0];
 
+	hideTargetNote();
 	document.getElementById('loopTarget').textContent = currentTarget.hanzi[currentTarget.type];
 
 	const randomIndex = Math.random() > 0.5 ? 1 : 0;
@@ -375,4 +369,16 @@ function createTargetOptions(type, fieldsetId, options, optionIndexes) {
 // color next orange if unchecked/incorrect?
 function checkTarget() {}
 
-function revealTargetNote() {}
+function hideTargetNote() {
+	const element = document.getElementById('targetNote');
+	element.firstElementChild.style.display = '';
+	while (element.lastChild !== element.firstElementChild) {
+		element.lastChild.remove();
+	}
+}
+
+function revealTargetNote() {
+	const element = document.getElementById('targetNote');
+	element.firstElementChild.style.display = 'none';
+	element.append(currentTarget.hanzi.note || '-');
+}

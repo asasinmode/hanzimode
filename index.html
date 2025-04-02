@@ -135,18 +135,6 @@
 					white-space: nowrap;
 					justify-self: center;
 				}
-
-				.looping & {
-					grid-template-columns: 1fr 1fr;
-
-					#startOrResetLoop {
-						justify-self: end;
-					}
-
-					#stopLoop {
-						justify-self: start;
-					}
-				}
 			}
 
 			main {
@@ -170,7 +158,9 @@
 					grid-column: span 2 / span 2;
 					width: 100%;
 					max-width: 640px;
+					min-height: 21.5px;
 					text-align: center;
+					color: light-dark(#262626, #a3a3a3);
 				}
 
 				#loopTarget {
@@ -219,11 +209,10 @@
 		<header>
 			<span id="loopStatus">0</span>
 			<button id="startOrResetLoop" onclick="startOrResetLoop(event)">start loop</button>
-			<button id="stopLoop" style="display: none" onclick="stopLoop()">stop loop</button>
 		</header>
 		<main>
 			<p id="targetNote">
-				<button id="revealTargetNote" onclick="revealTargetNote()">reveal note</button>
+				<button onclick="revealTargetNote()">reveal note</button>
 			</p>
 			<h1 id="loopTarget"></h1>
 			<fieldset id="loopFieldset1">
