@@ -312,6 +312,7 @@ function nextTarget() {
 
 	hideTargetNote();
 	resetFieldsets();
+	clearCanvas();
 	document.getElementById('loopTarget').textContent = currentTarget.hanzi[currentTarget.type];
 
 	const randomIndex = Math.random() > 0.5 ? 1 : 0;
@@ -521,4 +522,10 @@ canvas.addEventListener('touchend', () => {
 canvas.addEventListener('touchcancel', () => {
 	canvas.removeEventListener('touchmove', onCanvasMove);
 	stopDrawing();
+});
+
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'z' && event.ctrlKey && document.activeElement?.nodeName?.toLowerCase() === 'body') {
+		canvas.lastElementChild?.remove();
+	}
 });
