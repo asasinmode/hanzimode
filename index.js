@@ -415,55 +415,110 @@ function revealTargetNote() {
 	element.append(currentTarget.hanzi.note || '-');
 }
 
-/** @type {HTMLCanvasElement} */
-const canvas = document.getElementById('targetCanvas');
-const ctx = canvas.getContext('2d');
-
-function clearCanvas() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-const color = window?.matchMedia('(prefers-color-scheme: dark)').matches ? 'white' : 'black';
-const eraserColor = color === 'white' ? 'black' : 'white';
+/** @type {SVGSVGElement} */
+const canvas = document.getElementById('canvas');
 let canvasX, canvasY;
-let startX, startY;
-let isErasing = false;
 
 function onResize() {
 	({ left: canvasX, top: canvasY } = canvas.getBoundingClientRect());
 }
 window.addEventListener('resize', onResize);
 
-canvas.addEventListener('mousedown', (event) => {
-	isErasing = event.button === 2;
-	event.preventDefault();
-	startX = event.clientX;
-	startY = event.clientY;
-	canvas.addEventListener('mousemove', canvasOnMousemove);
-	canvas.addEventListener('mouseleave', canvasOnMouseleave);
-});
-
-canvas.addEventListener('mouseup', (event) => {
-	event.preventDefault();
-	canvas.removeEventListener('mousemove', canvasOnMousemove);
-	canvas.removeEventListener('mouseleave', canvasOnMouseleave);
-	ctx.stroke();
-	ctx.beginPath();
-});
-
-/** @param {MouseEvent} event */
-function canvasOnMousemove(event) {
-	event.preventDefault();
-	ctx.lineWidth = isErasing ? 8 : 3;
-	ctx.lineCap = 'round';
-	ctx.strokeStyle = isErasing ? eraserColor : color;
-	ctx.lineTo(event.clientX - canvasX, event.clientY - canvasY);
-	ctx.stroke();
+function clearCanvas() {
+	canvas.innerHTML = '';
 }
 
-function canvasOnMouseleave() {
-	canvas.removeEventListener('mousemove', canvasOnMousemove);
-	canvas.removeEventListener('mouseleave', canvasOnMouseleave);
-	ctx.stroke();
-	ctx.beginPath();
+const color = window?.matchMedia('(prefers-color-scheme: dark)').matches ? 'white' : 'black';
+/** @type {SVGPathElement|undefined} */
+let currentPath;
+/** @type {[number,number][]} */
+let points = [];
+
+/** @param {Event} event */
+function getXY(event) {
+	let x, y;
+	if (event.type.startsWith('mouse')) {
+		x = event.offsetX;
+		y = event.offsetY;
+	} else if (event.type.startsWith('touch')) {
+		const touch = event.touches[0];
+		x = touch.clientX - canvasX;
+		y = touch.clientY - canvasY;
+		event.preventDefault();
+	}
+	return [x, y];
 }
+
+/** @param {[number, number]} p */
+function startDrawing(p) {
+	points = [p];
+
+	currentPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+	currentPath.setAttribute('d', createDAttr());
+	currentPath.setAttribute('stroke', color);
+	currentPath.setAttribute('stroke-width', 3);
+	currentPath.setAttribute('fill', 'none');
+	currentPath.setAttribute('stroke-linecap', 'round');
+	currentPath.setAttribute('stroke-linejoin', 'round');
+
+	canvas.appendChild(currentPath);
+}
+
+/** @param {[number, number]} newPoints */
+function draw(newPoints) {
+	points.push(newPoints);
+	currentPath.setAttribute('d', createDAttr());
+}
+
+function stopDrawing() {
+	currentPath = undefined;
+	points = [];
+}
+
+function createDAttr() {
+	if (!points.length) {
+		return '';
+	}
+	const d = ['M', points[0][0].toFixed(2), points[0][1].toFixed(2)];
+	for (const [x, y] of points) {
+		d.push('L', x.toFixed(2), y.toFixed(2));
+	}
+	return d.join(' ');
+}
+
+/** @param {Event} e */
+function onCanvasMove(e) {
+	draw(getXY(e));
+}
+
+canvas.addEventListener('mousedown', (e) => {
+	if (e.buttons === 1) {
+		canvas.addEventListener('mousemove', onCanvasMove);
+		startDrawing(getXY(e));
+	}
+});
+
+canvas.addEventListener('mouseup', () => {
+	canvas.removeEventListener('mousemove', onCanvasMove);
+	stopDrawing();
+});
+
+canvas.addEventListener('mouseleave', () => {
+	canvas.removeEventListener('mousemove', onCanvasMove);
+	stopDrawing();
+});
+
+canvas.addEventListener('touchstart', (e) => {
+	canvas.addEventListener('touchmove', onCanvasMove);
+	startDrawing(getXY(e));
+});
+
+canvas.addEventListener('touchend', () => {
+	canvas.removeEventListener('touchmove', onCanvasMove);
+	stopDrawing();
+});
+
+canvas.addEventListener('touchcancel', () => {
+	canvas.removeEventListener('touchmove', onCanvasMove);
+	stopDrawing();
+});

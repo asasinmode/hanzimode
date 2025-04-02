@@ -224,7 +224,7 @@
 				transform: translateX(100%);
 			}
 
-			#targetCanvas {
+			#canvas {
 				background: light-dark(white, black);
 			}
 		</style>
@@ -237,7 +237,7 @@
 		</header>
 		<main>
 			<div id="canvasContainer">
-				<canvas id="targetCanvas" width="200" height="200" style="touch-action: none"></canvas>
+				<svg id="canvas" width="200" height="200" style="touch-action: none" />
 				<button id="clearCanvas" onclick="clearCanvas()">clear</button>
 			</div>
 			<p id="targetNote">
