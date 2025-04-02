@@ -21,7 +21,7 @@
 				background-color: light-dark(#fafafa, #171717);
 				margin: 0;
 				width: 100vw;
-				height: 100vh;
+				min-height: 100vh;
 				font-family:
 					Atkinson Hyperlegible,
 					ui-sans-serif,
@@ -40,8 +40,8 @@
 					'Noto Color Emoji';
 				display: grid;
 				grid-template-rows: min-content 1fr auto;
-				grid-template-columns: 1;
 				row-gap: 0.75rem;
+				position: relative;
 			}
 
 			@font-face {
@@ -62,38 +62,6 @@
 				grid-auto-rows: min-content;
 				column-gap: 1rem;
 				row-gap: 1rem;
-
-				#dataForm,
-				#dataTable {
-					grid-column: span 3 / span 3;
-				}
-
-				#dataForm {
-					display: grid;
-					grid-template-columns: 1fr auto 1fr;
-					grid-template-rows: repeat(3, min-content);
-					grid-auto-flow: column;
-					column-gap: 0.5rem;
-
-					label:nth-child(-n + 3) {
-						justify-self: end;
-					}
-
-					label[for='dataInputNote'],
-					#dataAddItem {
-						grid-row: span 3 / span 3;
-					}
-
-					label[for='dataInputNote'] textarea {
-						height: 100%;
-					}
-
-					#dataAddItem {
-						height: min-content;
-						align-self: center;
-						justify-self: start;
-					}
-				}
 
 				.dataButton {
 					width: fit-content;
@@ -118,23 +86,55 @@
 				}
 			}
 
+			#dataForm,
+			#dataTable {
+				grid-column: span 3 / span 3;
+			}
+
+			#dataForm {
+				display: grid;
+				grid-template-columns: 1fr auto 1fr;
+				grid-template-rows: repeat(3, min-content);
+				grid-auto-flow: column;
+				column-gap: 0.5rem;
+
+				label:nth-child(-n + 3) {
+					justify-self: end;
+				}
+
+				label[for='dataInputNote'],
+				#dataAddItem {
+					grid-row: span 3 / span 3;
+				}
+
+				label[for='dataInputNote'] textarea {
+					height: 100%;
+				}
+
+				#dataAddItem {
+					height: min-content;
+					align-self: center;
+					justify-self: start;
+				}
+			}
+
 			header {
 				position: relative;
 				display: grid;
 				grid-template-columns: 1fr;
 				column-gap: 0.5rem;
 
-				#loopStatus {
-					position: absolute;
-					left: 0;
-					top: 50%;
-					transform: translateY(-50%);
-				}
-
 				button {
 					white-space: nowrap;
 					justify-self: center;
 				}
+			}
+
+			#loopStatus {
+				position: absolute;
+				left: 0;
+				top: 50%;
+				transform: translateY(-50%);
 			}
 
 			main {
@@ -153,37 +153,18 @@
 					display: revert;
 				}
 
-				#targetNote {
-					justify-self: center;
-					grid-column: span 2 / span 2;
-					width: 100%;
-					max-width: 640px;
-					min-height: 21.5px;
-					text-align: center;
-					color: light-dark(#171717, #d4d4d4);
-				}
-
-				#loopTarget {
-					font-weight: 400;
-					grid-column: span 2 / span 2;
-					text-align: center;
-				}
-
-				#loopFieldset1,
-				#checkTarget {
-					justify-self: end;
-				}
-
-				#loopFieldset2,
-				#nextTarget {
-					justify-self: start;
-				}
-
 				fieldset {
 					grid-template-rows: subgrid;
 					grid-row: span 5 / span 5;
 					padding-inline: 0.5rem;
 					padding-top: 0.25rem;
+					filter: blur(5px);
+
+					&:hover,
+					&:focus-within,
+					&.correct {
+						filter: none;
+					}
 
 					.looping & {
 						display: grid;
@@ -202,15 +183,51 @@
 					}
 				}
 			}
-		</style>
-		<script>
-			const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-			const setting = localStorage.getItem('color-scheme') || 'auto';
 
-			if (setting === 'dark' || (prefersDark && setting !== 'light')) {
-				document.documentElement.classList.toggle('dark', true);
+			#targetNote {
+				justify-self: center;
+				grid-column: span 2 / span 2;
+				width: 100%;
+				max-width: 640px;
+				min-height: 21.5px;
+				text-align: center;
+				color: light-dark(#171717, #d4d4d4);
 			}
-		</script>
+
+			#loopTarget {
+				font-weight: 400;
+				grid-column: span 2 / span 2;
+				text-align: center;
+			}
+
+			#loopFieldset1,
+			#checkTarget {
+				justify-self: end;
+			}
+
+			#loopFieldset2,
+			#nextTarget {
+				justify-self: start;
+			}
+
+			#canvasContainer {
+				position: relative;
+				justify-self: center;
+				grid-column: span 2 / span 2;
+				border: 1px solid light-dark(black, transparent);
+			}
+
+			#clearCanvas {
+				position: absolute;
+				top: 0;
+				right: -4px;
+				transform: translateX(100%);
+			}
+
+			#targetCanvas {
+				background: light-dark(white, black);
+			}
+		</style>
 	</head>
 
 	<body>
@@ -219,6 +236,10 @@
 			<button id="startOrResetLoop" onclick="startOrResetLoop(event)">start loop</button>
 		</header>
 		<main>
+			<div id="canvasContainer">
+				<canvas id="targetCanvas" width="200" height="200" style="touch-action: none"></canvas>
+				<button id="clearCanvas" onclick="clearCanvas()">clear</button>
+			</div>
 			<p id="targetNote">
 				<button onclick="revealTargetNote()">reveal note</button>
 			</p>

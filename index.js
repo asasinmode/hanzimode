@@ -247,7 +247,11 @@ function startOrResetLoop(event) {
 			stopLoop();
 		}
 		return;
-	} else if (!isLooping) {
+	} else {
+		if (data.hanzi.length < 5) {
+			alert('at least 5 items have to be in the collection');
+			return;
+		}
 		event.target.textContent = 'reset loop';
 	}
 
@@ -259,10 +263,13 @@ function startOrResetLoop(event) {
 		[toBeLooped[i], toBeLooped[j]] = [toBeLooped[j], toBeLooped[i]];
 	}
 
+	clearCanvas();
+
 	document.body.classList.add('looping');
 
 	updateLoopStatus();
 	nextTarget();
+	onResize();
 }
 
 function stopLoop() {
@@ -406,4 +413,57 @@ function revealTargetNote() {
 	const element = document.getElementById('targetNote');
 	element.firstElementChild.style.display = 'none';
 	element.append(currentTarget.hanzi.note || '-');
+}
+
+/** @type {HTMLCanvasElement} */
+const canvas = document.getElementById('targetCanvas');
+const ctx = canvas.getContext('2d');
+
+function clearCanvas() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+const color = window?.matchMedia('(prefers-color-scheme: dark)').matches ? 'white' : 'black';
+const eraserColor = color === 'white' ? 'black' : 'white';
+let canvasX, canvasY;
+let startX, startY;
+let isErasing = false;
+
+function onResize() {
+	({ left: canvasX, top: canvasY } = canvas.getBoundingClientRect());
+}
+window.addEventListener('resize', onResize);
+
+canvas.addEventListener('mousedown', (event) => {
+	isErasing = event.button === 2;
+	event.preventDefault();
+	startX = event.clientX;
+	startY = event.clientY;
+	canvas.addEventListener('mousemove', canvasOnMousemove);
+	canvas.addEventListener('mouseleave', canvasOnMouseleave);
+});
+
+canvas.addEventListener('mouseup', (event) => {
+	event.preventDefault();
+	canvas.removeEventListener('mousemove', canvasOnMousemove);
+	canvas.removeEventListener('mouseleave', canvasOnMouseleave);
+	ctx.stroke();
+	ctx.beginPath();
+});
+
+/** @param {MouseEvent} event */
+function canvasOnMousemove(event) {
+	event.preventDefault();
+	ctx.lineWidth = isErasing ? 8 : 3;
+	ctx.lineCap = 'round';
+	ctx.strokeStyle = isErasing ? eraserColor : color;
+	ctx.lineTo(event.clientX - canvasX, event.clientY - canvasY);
+	ctx.stroke();
+}
+
+function canvasOnMouseleave() {
+	canvas.removeEventListener('mousemove', canvasOnMousemove);
+	canvas.removeEventListener('mouseleave', canvasOnMouseleave);
+	ctx.stroke();
+	ctx.beginPath();
 }
