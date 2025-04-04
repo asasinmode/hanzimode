@@ -62,27 +62,31 @@
 				grid-auto-rows: min-content;
 				column-gap: 1rem;
 				row-gap: 1rem;
+			}
 
-				.dataButton {
-					width: fit-content;
-					white-space: nowrap;
+			.dataButton {
+				width: fit-content;
+				white-space: nowrap;
+			}
+
+			.dataButton:first-of-type {
+				justify-self: end;
+			}
+
+			#dataTable {
+				justify-self: center;
+
+				tr:nth-child(even) {
+					background: light-dark(#e5e5e5, #262626);
 				}
 
-				.dataButton:first-of-type {
-					justify-self: end;
+				td:nth-child(3),
+				td:nth-child(4) {
+					text-wrap: wrap;
 				}
 
-				#dataTable {
-					justify-self: center;
-
-					tr:nth-child(even) {
-						background: light-dark(#e5e5e5, #262626);
-					}
-
-					td:nth-child(3),
-					td:nth-child(4) {
-						text-wrap: wrap;
-					}
+				td:nth-child(4) {
+					white-space: preserve;
 				}
 			}
 
