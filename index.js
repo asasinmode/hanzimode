@@ -43,6 +43,7 @@ let fieldset1CorrectIndex;
 let fieldset2CorrectIndex;
 
 const GUESS_OPTIONS_NUMBER = 4;
+const allTargets = ['symbol', 'pinyin', 'meaning'];
 const allowedTargets = ['symbol', 'pinyin', 'meaning'];
 
 const _version = localStorage.getItem('hanzimode.version');
@@ -307,8 +308,8 @@ function nextTarget() {
 	}
 
 	currentTarget = { hanzi: toBeLooped[toBeLooped.length - 1] };
-	const chooseFrom = [...allowedTargets];
-	currentTarget.type = chooseFrom.splice(Math.floor(Math.random() * chooseFrom.length), 1)[0];
+	currentTarget.type = allowedTargets[Math.floor(Math.random() * allowedTargets.length)];
+	const inputTypes = allTargets.filter(target => target !== currentTarget.type);
 
 	hideTargetNote();
 	resetFieldsets();
@@ -318,8 +319,8 @@ function nextTarget() {
 	const randomIndex = Math.random() > 0.5 ? 1 : 0;
 
 	let indexes;
-	[indexes, fieldset1CorrectIndex] = createTargetOptions(chooseFrom[randomIndex], 'loopFieldset1');
-	[, fieldset2CorrectIndex] = createTargetOptions(chooseFrom[1 - randomIndex], 'loopFieldset2', indexes);
+	[indexes, fieldset1CorrectIndex] = createTargetOptions(inputTypes[randomIndex], 'loopFieldset1');
+	[, fieldset2CorrectIndex] = createTargetOptions(inputTypes[1 - randomIndex], 'loopFieldset2', indexes);
 
 	updateLoopStatus();
 }
