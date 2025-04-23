@@ -374,8 +374,11 @@ function createTargetOptions(type, fieldsetId, optionIndexes) {
 function checkTarget() {
 	const fieldset1 = document.getElementById('loopFieldset1');
 	const fieldset2 = document.getElementById('loopFieldset2');
-	checkFieldset(fieldset1, fieldset1CorrectIndex);
-	checkFieldset(fieldset2, fieldset2CorrectIndex);
+	const correct1 = checkFieldset(fieldset1, fieldset1CorrectIndex);
+	const correct2 = checkFieldset(fieldset2, fieldset2CorrectIndex);
+	if (correct1 && correct2) {
+		revealTargetNote();
+	}
 }
 
 /**
@@ -389,6 +392,7 @@ function checkFieldset(element, correctIndex) {
 		if (isCorrect) {
 			element.classList.toggle('correct', true);
 			element.classList.toggle('incorrect', false);
+			return true;
 		} else {
 			element.classList.toggle('incorrect', true);
 			element.classList.toggle('correct', false);
@@ -396,6 +400,7 @@ function checkFieldset(element, correctIndex) {
 	} else {
 		element.classList.remove('correct', 'incorrect');
 	}
+	return false;
 }
 
 function resetFieldsets() {
@@ -413,8 +418,10 @@ function hideTargetNote() {
 
 function revealTargetNote() {
 	const element = document.getElementById('targetNote');
-	element.firstElementChild.style.display = 'none';
-	element.append(currentTarget.hanzi.note || '-');
+	if (element.firstElementChild.style.display === '') {
+		element.firstElementChild.style.display = 'none';
+		element.append(currentTarget.hanzi.note || '-');
+	}
 }
 
 /** @type {SVGSVGElement} */
