@@ -218,7 +218,7 @@
 					grid-template-rows: subgrid;
 					grid-row: span 5 / span 5;
 					grid-column: span 2 / span 2;
-					padding: 0.25rem 0.5rem;
+					padding: 0 0.5rem 0.25rem;
 					height: min-content;
 					justify-self: center;
 					width: 100%;
@@ -280,7 +280,7 @@
 				min-height: 21.5px;
 				text-align: center;
 				color: light-dark(#171717, #d4d4d4);
-				margin-block-start: 0.5em;
+				padding-block-start: 0.5em;
 			}
 
 			#loopTarget {
@@ -294,17 +294,12 @@
 				justify-self: center;
 				background: var(--bg-color);
 				padding-inline: 0.5em;
-				margin-block-end: 2rem;
 			}
 
 			#checkTarget,
 			#nextTarget {
 				padding: 0.2em 0.5em;
-				margin-block-start: -0.875rem;
-
-				@media (min-width: 540px) {
-					margin-block: 0;
-				}
+				margin-top: 0.75rem;
 			}
 
 			#checkTarget {
@@ -315,23 +310,9 @@
 				justify-self: start;
 			}
 
-			#loopFieldset1 {
-				margin-block-start: -1.75rem;
-			}
-
-			#loopFieldset2 {
-				margin-block-start: -1.25rem;
-			}
-
 			@media (min-width: 540px) {
 				#loopTarget {
 					position: static;
-					margin-block: 0;
-				}
-
-				#loopFieldset1,
-				#loopFieldset2 {
-					margin-block: 0;
 				}
 
 				#loopFieldset1 {
@@ -340,11 +321,6 @@
 
 				#loopFieldset2 {
 					justify-self: start;
-				}
-
-				#checkTarget,
-				#nextTarget {
-					margin-top: 0.75rem;
 				}
 			}
 
