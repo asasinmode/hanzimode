@@ -44,7 +44,7 @@ let fieldset2CorrectIndex;
 
 const GUESS_OPTIONS_NUMBER = 4;
 const allTargets = ['symbol', 'pinyin', 'meaning'];
-const allowedTargets = ['symbol'];
+let guessFrom = ['symbol', 'pinyin', 'meaning'];
 
 const _version = localStorage.getItem('hanzimode.version');
 if (!_version) {
@@ -308,7 +308,7 @@ function nextTarget() {
 	}
 
 	currentTarget = { hanzi: toBeLooped[toBeLooped.length - 1] };
-	currentTarget.type = allowedTargets[Math.floor(Math.random() * allowedTargets.length)];
+	currentTarget.type = guessFrom[Math.floor(Math.random() * guessFrom.length)];
 	const inputTypes = allTargets.filter(target => target !== currentTarget.type);
 
 	hideTargetNote();
@@ -545,6 +545,15 @@ function openSettingsDialog() {
 }
 
 function closeSettingsDialog() {
+	for (const target of allTargets) {
+		const element = document.getElementById(`guessFrom${target[0].toUpperCase()}${target.slice(1)}`);
+		const isValid = element.checkValidity();
+		if (!isValid) {
+			element.reportValidity();
+			return;
+		}
+	}
+
 	settingsDialog.close();
 }
 
@@ -562,4 +571,36 @@ function updateBlurEnabled(e) {
 		document.body.removeAttribute('data-blur-enabled');
 		localStorage.removeItem('hanzimode.blurEnabled');
 	}
+}
+
+const storedGuessFrom = localStorage.getItem('hanzimode.guessFrom');
+if (storedGuessFrom) {
+	const validTargets = storedGuessFrom.split(',').filter(target => allTargets.includes(target));
+	if (validTargets.length) {
+		guessFrom = validTargets;
+	}
+}
+
+for (const target of guessFrom) {
+	document.getElementById(`guessFrom${target[0].toUpperCase()}${target.slice(1)}`).checked = true;
+}
+
+/** @param {InputEvent} e */
+function updateGuessFrom(e) {
+	for (const target of allTargets) {
+		document.getElementById(`guessFrom${target[0].toUpperCase()}${target.slice(1)}`).setCustomValidity('');
+	}
+
+	const { value } = e.target;
+	const index = guessFrom.indexOf(value);
+	if (~index) {
+		if (guessFrom.length <= 1) {
+			e.target.setCustomValidity('At least one target has to be selected');
+			e.target.reportValidity();
+		}
+		guessFrom.splice(index, 1);
+	} else {
+		guessFrom.push(value);
+	}
+	localStorage.setItem('hanzimode.guessFrom', guessFrom.join(','));
 }
