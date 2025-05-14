@@ -25,13 +25,14 @@ _\* technically it would still be there but inaccessible to the renamed/moved `i
 
 Once you've made a collection of hànzì you're familiar with, use the toggles at the top of the screen to set your preferences.
 
-- **mode** - Choose what form you want the hànzì to appear in. for example checking hànzì, pinyin and meaning will mean the _next_ character will appear in any of those 3 forms. Checking just pinyin would make all characters appear as pinyin.
-- **input** - Choose what input is expected. For example, with only pinyin checked in _mode_, the expected input can be any or both of hànzì/meaning. Note that _mode_ requires a specific configuration for _input_. It wouldn't make sense to have both the _mode_ and _input_ be pinyin.
-  Finally, there is the **diacritic helper** toggle which shows/hides the special characters like `ê ù í à` when you type the pinyin. The exact spelling is required for the _input_ to be correct but if you have a way of entering those characters on your own feel free to hide the helper.
+- **guess from** - Choose what form you want the hànzì to appear in. For example checking hànzì, pinyin and meaning will mean the _next_ character will appear in any of those 3 forms. Checking just pinyin would make all characters appear as pinyin (and you'd be guessing meaning and hànzì).
+- **blur** - Toggle whether to blur the input when unhovered/unfocused.
+- ~~**input** - Choose what input is expected. For example, with only pinyin checked in _mode_, the expected input can be any or both of hànzì/meaning. Note that _mode_ requires a specific configuration for _input_. It wouldn't make sense to have both the _mode_ and _input_ be pinyin.~~
+- ~~**diacritic helper** - toggle which shows/hides the special characters like `ê ù í à` when you type the pinyin. The exact spelling is required for the _input_ to be correct but if you have a way of entering those characters on your own feel free to hide the helper.~~
 
 ## play
 
-Use the **start loop** button to start going through the characters you've added. A black square **you can draw in** will appear and below it the character in one of your selected _modes_. At the bottom there will be inputs for other variants. Once you fill them, use the **check** button to see if you're correct. If you're struggling, you can **reveal** any of the expected inputs or your note.
+Use the **start loop** button to start going through the characters you've added. A black square **you can draw in** will appear and below it the character in one of your selected _modes_. At the bottom there will be inputs for other variants. Once you fill them, use the **check** button to see if you're correct. If you're struggling, you can **reveal** any of the expected inputs or your note by hovering over it.
 
 In the top left there is a counter showing how many characters you've gone through out of all of the ones you've added. Use the **reset loop** button at any point (or when finished) to clear your progress and begin a new loop.
 
