@@ -254,7 +254,7 @@
 					&:focus-within,
 					&.correct {
 						label {
-							filter: none;
+							filter: none !important;
 						}
 					}
 
@@ -282,10 +282,10 @@
 				grid-column: span 2 / span 2;
 				width: 100%;
 				max-width: 640px;
-				min-height: 21.5px;
 				text-align: center;
 				color: light-dark(#171717, #d4d4d4);
 				padding-block-start: 0.5em;
+				line-height: 20.5px;
 			}
 
 			#loopTarget {
@@ -369,10 +369,6 @@
 					grid-template-columns: min-content 1fr;
 					column-gap: 0.25rem;
 					line-height: 1.25;
-
-					input[type='checkbox'] {
-						vertical-align: middle;
-					}
 				}
 			}
 
@@ -421,7 +417,7 @@
 					</label>
 				</fieldset>
 				<label for="blurInputs">
-					<input id="blurInputs" type="checkbox" />
+					<input id="blurInputs" type="checkbox" onchange="updateBlurEnabled(event)" />
 					blur inputs
 				</label>
 			</dialog>

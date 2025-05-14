@@ -547,3 +547,19 @@ function openSettingsDialog() {
 function closeSettingsDialog() {
 	settingsDialog.close();
 }
+
+if (localStorage.getItem('hanzimode.blurEnabled')) {
+	document.getElementById('blurInputs').checked = 'true';
+	document.body.setAttribute('data-blur-enabled', '');
+}
+
+/** @param {InputEvent} e */
+function updateBlurEnabled(e) {
+	if (e.target.checked) {
+		document.body.setAttribute('data-blur-enabled', '');
+		localStorage.setItem('hanzimode.blurEnabled', 'true');
+	} else {
+		document.body.removeAttribute('data-blur-enabled');
+		localStorage.removeItem('hanzimode.blurEnabled');
+	}
+}
