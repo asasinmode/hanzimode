@@ -398,7 +398,7 @@
 			<span id="loopStatus">0</span>
 			<button id="startOrResetLoop" onclick="startOrResetLoop(event)">start loop</button>
 			<button id="openSettingsDialog" onclick="openSettingsDialog()">settings</button>
-			<dialog id="settingsDialog">
+			<dialog id="settingsDialog" onkeydown="stopSettingsCloseIfInvalid(event)">
 				<h3>settings</h3>
 				<button id="settingsClose" autofocus onclick="closeSettingsDialog()">close</button>
 				<fieldset id="settingsGuessFrom" onchange="updateGuessFrom(event)">

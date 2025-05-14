@@ -545,16 +545,27 @@ function openSettingsDialog() {
 }
 
 function closeSettingsDialog() {
+	if (areSettingsValid()) {
+		settingsDialog.close();
+	}
+}
+
+function stopSettingsCloseIfInvalid(e) {
+	if (e.code === 'Escape' && !areSettingsValid()) {
+		e.preventDefault();
+	}
+}
+
+function areSettingsValid() {
 	for (const target of allTargets) {
 		const element = document.getElementById(`guessFrom${target[0].toUpperCase()}${target.slice(1)}`);
 		const isValid = element.checkValidity();
 		if (!isValid) {
 			element.reportValidity();
-			return;
+			return false;
 		}
 	}
-
-	settingsDialog.close();
+	return true;
 }
 
 if (localStorage.getItem('hanzimode.blurEnabled')) {
