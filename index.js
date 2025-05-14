@@ -44,7 +44,7 @@ let fieldset2CorrectIndex;
 
 const GUESS_OPTIONS_NUMBER = 4;
 const allTargets = ['symbol', 'pinyin', 'meaning'];
-const allowedTargets = ['symbol', 'pinyin', 'meaning'];
+const allowedTargets = ['symbol'];
 
 const _version = localStorage.getItem('hanzimode.version');
 if (!_version) {
@@ -266,7 +266,7 @@ function startOrResetLoop(event) {
 
 	clearCanvas();
 
-	document.body.classList.add('looping');
+	document.body.setAttribute('data-is-looping', '');
 
 	updateLoopStatus();
 	nextTarget();
@@ -281,7 +281,7 @@ function stopLoop() {
 
 	document.getElementById('startOrResetLoop').textContent = 'start loop';
 	document.getElementById('nextTarget').removeAttribute('disabled');
-	document.body.classList.remove('looping');
+	document.body.removeAttribute('data-is-looping');
 	resetFieldsets();
 
 	updateLoopStatus();
@@ -537,3 +537,13 @@ document.addEventListener('keydown', (event) => {
 		canvas.lastElementChild?.remove();
 	}
 });
+
+const settingsDialog = document.getElementById('settingsDialog');
+
+function openSettingsDialog() {
+	settingsDialog.showModal();
+}
+
+function closeSettingsDialog() {
+	settingsDialog.close();
+}
