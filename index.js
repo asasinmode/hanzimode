@@ -300,6 +300,9 @@ function nextTarget() {
 	}
 
 	if (currentTarget) {
+		if (fastModeEnabled && !checkTarget(false)) {
+			return;
+		}
 		loopedThrough.push(currentTarget.hanzi.symbol);
 		toBeLooped.pop();
 
@@ -372,14 +375,20 @@ function createTargetOptions(type, fieldsetId, optionIndexes) {
 	return [optionIndexes, correctIndex];
 }
 
-function checkTarget() {
+/**
+ * @returns boolean indicating whether both inputs are correct
+ */
+function checkTarget(revealNote = true) {
 	const fieldset1 = document.getElementById('loopFieldset1');
 	const fieldset2 = document.getElementById('loopFieldset2');
 	const correct1 = checkFieldset(fieldset1, fieldset1CorrectIndex);
 	const correct2 = checkFieldset(fieldset2, fieldset2CorrectIndex);
-	if (correct1 && correct2) {
+
+	const isCorrect = correct1 && correct2;
+	if (revealNote && isCorrect) {
 		revealTargetNote();
 	}
+	return isCorrect;
 }
 
 /**
