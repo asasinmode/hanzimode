@@ -169,6 +169,7 @@ function addDataRow(tbody, { symbol, pinyin, meaning, note }) {
 		document.getElementById('dataInputPinyin').value = item.pinyin;
 		document.getElementById('dataInputMeaning').value = item.meaning;
 		document.getElementById('dataInputNote').value = item.note;
+		document.getElementById('dataInputSymbol').focus();
 	});
 	actionsCell.appendChild(editButton);
 
