@@ -153,14 +153,14 @@ function showData() {
  * @param {IHanzi} hanzi
  */
 function addDataRow(tbody, { symbol, pinyin, meaning, note }) {
-	const row = Object.assign(document.createElement('tr'), { id: `data-${symbol}` });
+	const row = Object.assign(document.createElement('tr'), { id: `data-${symbol}`, role: 'row' });
 
 	for (const property of [symbol, pinyin, meaning, note]) {
-		const cell = Object.assign(document.createElement('td'), { textContent: property });
+		const cell = Object.assign(document.createElement('td'), { textContent: property, role: 'cell' });
 		row.appendChild(cell);
 	}
 
-	const actionsCell = document.createElement('td');
+	const actionsCell = Object.assign(document.createElement('td'), { role: 'cell' });
 	const editButton = Object.assign(document.createElement('button'), { textContent: 'edit' });
 	editButton.addEventListener('click', () => {
 		document.getElementById('dataForm').scrollIntoView();

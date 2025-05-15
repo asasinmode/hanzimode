@@ -64,7 +64,6 @@
 				column-gap: 1rem;
 				row-gap: 1rem;
 				padding-block-end: 1rem;
-				overflow: auto;
 			}
 
 			.dataButton {
@@ -86,6 +85,7 @@
 
 			#dataTable {
 				justify-self: center;
+				table-layout: fixed;
 
 				tr:nth-child(even) {
 					background: light-dark(#e5e5e5, #262626);
@@ -98,6 +98,43 @@
 
 				td:nth-child(4) {
 					white-space: preserve;
+				}
+
+				@media (max-width: 639px) {
+					tr {
+						display: block;
+						padding: 0.2em 0.4em;
+					}
+
+					thead tr {
+						display: none;
+					}
+
+					td {
+						display: grid;
+						grid-template-columns: 6rem 1fr;
+					}
+
+					td::before {
+						opacity: 0.8;
+					}
+					td:nth-child(1)::before {
+						content: 'hànzì';
+					}
+					td:nth-child(2)::before {
+						content: 'pinyin';
+					}
+					td:nth-child(3)::before {
+						content: 'meaning';
+					}
+					td:nth-child(4)::before {
+						content: 'note';
+					}
+					td:last-of-type {
+						display: flex;
+						justify-content: end;
+						gap: 0.4rem;
+					}
 				}
 			}
 
@@ -480,14 +517,14 @@
 				<button onclick="document.getElementById('dataImport')?.click()">import data</button>
 				<input id="dataImport" type="file" accept=".json" oninput="importData(event)" />
 			</label>
-			<table id="dataTable" style="display: none">
+			<table id="dataTable" style="display: none" role="table">
 				<thead>
-					<tr>
-						<th width="7.5%">hànzì</th>
-						<th width="12.5%">pinyin</th>
-						<th width="35%">meaning</th>
-						<th width="35%">note</th>
-						<th width="10%">actions</th>
+					<tr role="row">
+						<th role="columnheader" width="7.5%">hànzì</th>
+						<th role="columnheader" width="12.5%">pinyin</th>
+						<th role="columnheader" width="35%">meaning</th>
+						<th role="columnheader" width="35%">note</th>
+						<th role="columnheader" width="10%">actions</th>
 					</tr>
 				</thead>
 			</table>
