@@ -27,6 +27,7 @@ Once you've made a collection of hànzì you're familiar with, use the toggles a
 
 - **guess from** - Choose what form you want the hànzì to appear in. For example checking hànzì, pinyin and meaning will mean the _next_ character will appear in any of those 3 forms. Checking just pinyin would make all characters appear as pinyin (and you'd be guessing meaning and hànzì).
 - **blur** - Toggle whether to blur the input when unhovered/unfocused.
+- **fast mode** - Toggle to replace the `check` and `next` buttons with just `next`. If your choices are correct, it will instantly go to next character and if not, the incorrect one will be highlighted red.
 - ~~**input** - Choose what input is expected. For example, with only pinyin checked in _mode_, the expected input can be any or both of hànzì/meaning. Note that _mode_ requires a specific configuration for _input_. It wouldn't make sense to have both the _mode_ and _input_ be pinyin.~~
 - ~~**diacritic helper** - toggle which shows/hides the special characters like `ê ù í à` when you type the pinyin. The exact spelling is required for the _input_ to be correct but if you have a way of entering those characters on your own feel free to hide the helper.~~
 
@@ -44,6 +45,5 @@ In the top left there is a counter showing how many characters you've gone throu
    - pinyin diacritic helpers, 'ą'.normalize('NFD')
    - notifications (save/loaded) & errors somewhere
 2. merge collections
-3. fast mode? skip the `next` button, if correct move on after check
-4. select from collection which ones to use/add "subcollections" that use stuff from main?
-5. store loop info/settings
+3. select from collection which ones to use/add "subcollections" that use stuff from main?
+4. store loop info/settings

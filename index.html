@@ -315,6 +315,17 @@
 				justify-self: start;
 			}
 
+			body[data-fast-mode] {
+				#checkTarget {
+					display: none;
+				}
+
+				#nextTarget {
+					grid-column: span 2 / span 2;
+					justify-self: center;
+				}
+			}
+
 			@media (min-width: 540px) {
 				#loopTarget {
 					position: static;
@@ -419,6 +430,10 @@
 				<label for="blurInputs">
 					<input id="blurInputs" type="checkbox" onchange="updateBlurEnabled(event)" />
 					blur inputs
+				</label>
+				<label for="fastMode">
+					<input id="fastMode" type="checkbox" onchange="updateFastMode(event)" />
+					fast mode
 				</label>
 			</dialog>
 		</header>

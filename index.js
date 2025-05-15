@@ -45,6 +45,7 @@ let fieldset2CorrectIndex;
 const GUESS_OPTIONS_NUMBER = 4;
 const allTargets = ['symbol', 'pinyin', 'meaning'];
 let guessFrom = ['symbol', 'pinyin', 'meaning'];
+let fastModeEnabled = false;
 
 const _version = localStorage.getItem('hanzimode.version');
 if (!_version) {
@@ -614,4 +615,23 @@ function updateGuessFrom(e) {
 		guessFrom.push(value);
 	}
 	localStorage.setItem('hanzimode.guessFrom', guessFrom.join(','));
+}
+
+if (localStorage.getItem('hanzimode.fastMode')) {
+	document.getElementById('fastMode').checked = 'true';
+	document.body.setAttribute('data-fast-mode', '');
+	fastModeEnabled = true;
+}
+
+/** @param {InputEvent} e */
+function updateFastMode(e) {
+	if (e.target.checked) {
+		document.body.setAttribute('data-fast-mode', '');
+		localStorage.setItem('hanzimode.fastMode', 'true');
+		fastModeEnabled = true;
+	} else {
+		document.body.removeAttribute('data-fast-mode');
+		localStorage.removeItem('hanzimode.fastMode');
+		fastModeEnabled = false;
+	}
 }
